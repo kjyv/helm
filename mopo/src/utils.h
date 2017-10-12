@@ -25,6 +25,8 @@
 
 #ifdef __SSE2__
 #include <emmintrin.h>
+#elif defined(__ARM_NEON) || defined(__ARM_FEATURE_SIMD32)
+#include "SSE2NEON.h"
 #else
 #include <algorithm>
 #endif
@@ -55,7 +57,7 @@ namespace mopo {
     const Value value_2pi(2.0 * PI);
     const Value value_neg_one(-1.0);
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(__ARM_NEON) || defined(__ARM_FEATURE_SIMD32)
     inline double min(double one, double two) {
       _mm_store_sd(&one, _mm_min_sd(_mm_set_sd(one),_mm_set_sd(two)));
       return one;
