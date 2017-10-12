@@ -264,12 +264,20 @@ namespace mopo {
     peak_meter_->plug(scaled_audio_left, 0);
     peak_meter_->plug(scaled_audio_right, 1);
     mod_sources_["peak_meter"] = peak_meter_->output();
-
-    // Hard Clip.
-    Clamp* clamp_left = new Clamp(-2.1, 2.1);
+    
+    // Hard Clip
+    /*Clamp* clamp_left = new Clamp(-2.1, 2.1);
+    clamp_left->plug(scaled_audio_left);
+    
+    Clamp* clamp_right = new Clamp(-2.1, 2.1);
+    clamp_right->plug(scaled_audio_right);
+    */
+      
+    // Soft Clip
+    SoftClamp* clamp_left = new SoftClamp(-1.0, 1.0);
     clamp_left->plug(scaled_audio_left);
 
-    Clamp* clamp_right = new Clamp(-2.1, 2.1);
+    SoftClamp* clamp_right = new SoftClamp(-1.0, 1.0);
     clamp_right->plug(scaled_audio_right);
     
     addProcessor(peak_meter_);

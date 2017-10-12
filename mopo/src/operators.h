@@ -78,6 +78,28 @@ namespace mopo {
       mopo_float min_, max_;
   };
 
+  // A processor that will clamp a signal output to a given window.
+  class SoftClamp : public Operator {
+    public:
+      SoftClamp(mopo_float min = -1, mopo_float max = 1) : Operator(1, 1),
+                                                           min_(min), max_(max) { }
+        
+      virtual Processor* clone() const override { return new SoftClamp(*this); }
+        
+      void process() override;
+        
+      inline void tick(int i) override {
+        bufferTick(output()->buffer, input()->source->buffer, i);
+      }
+        
+      inline void bufferTick(mopo_float* dest, const mopo_float* source, int i) {
+        dest[i] = utils::soft_clamp(source[i], min_, max_);
+      }
+        
+    private:
+      mopo_float min_, max_;
+  };
+    
   // A processor that passes input to output.
   class Bypass : public Operator {
     public:

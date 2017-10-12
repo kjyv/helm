@@ -104,6 +104,18 @@ namespace mopo {
     }
 #endif
 
+    inline mopo_float soft_clamp(mopo_float value, mopo_float min, mopo_float max) {
+      //soft-clip value within -1/1 (min/max is ignored for now)
+      //uses function from https://ccrma.stanford.edu/~jos/pasp/Soft_Clipping.html
+      if (value <= -1) {
+        return( (-1 + (1.0f/3.0f)) );
+      } else if (value >= 1) {
+        return( (1 - (1.0f/3.0f)) );
+      } else {
+        return( (value - (powf(value,3)/3)) );
+      }
+    }
+      
     inline int imax(int one, int two) {
       return (one > two) ? one : two;
     }
