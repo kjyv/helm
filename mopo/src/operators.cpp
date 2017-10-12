@@ -43,6 +43,7 @@ namespace mopo {
   void Clamp::process() {
     MOPO_ASSERT(inputMatchesBufferSize());
 
+
 #ifdef USE_APPLE_ACCELERATE
     vDSP_vclipD(input()->source->buffer, 1,
                 &min_, &max_,
@@ -57,6 +58,18 @@ namespace mopo {
     processTriggers();
   }
 
+  void SoftClamp::process() {
+    MOPO_ASSERT(inputMatchesBufferSize());
+    
+    mopo_float* dest = output()->buffer;
+    const mopo_float* source = input()->source->buffer;
+    
+    for (int i = 0; i < buffer_size_; ++i)
+      bufferTick(dest, source, i);
+    
+    processTriggers();
+  }
+    
   void Negate::process() {
     MOPO_ASSERT(inputMatchesBufferSize());
 
