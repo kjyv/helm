@@ -55,8 +55,11 @@ namespace mopo {
         mopo_float read = memory_->getIndex(period);
         filtered_sample_ = utils::interpolate(read, filtered_sample_, damping);
 
-        mopo_float value = audio + filtered_sample_ * feedback;
-        memory_->push(value);
+#ifdef FP_FAST_FMA
+        memory_->push(fma(filtered_sample_, feedback, audio));
+#else
+        memory_->push(audio + filtered_sample_ * feedback);
+#endif
         dest[i] = read;
       }
 
