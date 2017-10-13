@@ -112,6 +112,7 @@ namespace mopo {
       } else if (value >= 1) {
         return( (1 - (1.0f/3.0f)) );
       } else {
+        value = value + 0.01f;   //break odd harmonic symmetry
         return( (value - (powf(value,3)/3)) );
       }
     }
