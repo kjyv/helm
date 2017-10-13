@@ -49,7 +49,12 @@ namespace mopo {
         mopo_float feedback = feedback_buffer[i];
 
         mopo_float read = memory_->getIndex(period);
+#ifdef FP_FAST_FMA
+        memory_->push(fma(read, feedback, audio));
+#else
         memory_->push(audio + read * feedback);
+#endif
+        
         dest[i] = read - audio;
       }
 
