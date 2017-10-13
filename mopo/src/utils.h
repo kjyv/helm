@@ -108,12 +108,12 @@ namespace mopo {
       //soft-clip value within -1/1 (min/max is ignored for now)
       //uses function from https://ccrma.stanford.edu/~jos/pasp/Soft_Clipping.html
       if (value <= -1) {
-        return( (-1 + (1.0f/3.0f)) );
+        return( (-1 + (1.0/3.0)) );
       } else if (value >= 1) {
-        return( (1 - (1.0f/3.0f)) );
+        return( (1 - (1.0/3.0)) );
       } else {
-        value = value + 0.01f;   //break odd harmonic symmetry
-        return( (value - (powf(value,3)/3)) );
+        value = value + 0.01;   //break odd harmonic symmetry
+        return( (value - ((value*value*value)/3)) );
       }
     }
       
@@ -126,11 +126,19 @@ namespace mopo {
     }
 
     inline double interpolate(double from, double to, double t) {
+#ifdef FP_FAST_FMA
+      return fma(t, to - from, from);
+#else
       return t * (to - from) + from;
+#endif
     }
 
     inline float interpolate(float from, float to, float t) {
+#ifdef FP_FAST_FMAF
       return fmaf(t, to - from, from);
+#else
+      return t * (to - from) + from;
+#endif
     }
 
     inline mopo_float mod(double value, double* integral) {
