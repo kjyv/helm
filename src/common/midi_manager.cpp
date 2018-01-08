@@ -124,9 +124,9 @@ void MidiManager::processMidiMessage(const MidiMessage& midi_message, int sample
     engine_->setAftertouch(note, value);
   }
   else if (midi_message.isChannelPressure()) {
-    int channel = midi_message.getChannel();
+    int channel = midi_message.getChannel() - 1;
     mopo::mopo_float value = midi_message.getChannelPressureValue() / (mopo::MIDI_SIZE - 1.0f);
-    engine_->setChannelAftertouch(channel, value);
+    engine_->setChannelAftertouch(channel, value, sample_position);
   }
   else if (midi_message.isPitchWheel()) {
     double percent = (1.0 * midi_message.getPitchWheelValue()) / PITCH_WHEEL_RESOLUTION;

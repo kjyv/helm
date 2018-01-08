@@ -389,11 +389,12 @@ namespace mopo {
     arpeggiator_->allNotesOff(sample);
   }
 
-  void HelmEngine::noteOn(mopo_float note, mopo_float velocity, int sample, int channel) {
+  void HelmEngine::noteOn(mopo_float note, mopo_float velocity, int sample, int channel,
+                          mopo_float aftertouch) {
     if (arp_on_->value())
-      arpeggiator_->noteOn(note, velocity, sample);
+      arpeggiator_->noteOn(note, velocity, sample, channel, aftertouch);
     else
-      voice_handler_->noteOn(note, velocity, sample, channel);
+      voice_handler_->noteOn(note, velocity, sample, channel, aftertouch);
   }
 
   VoiceEvent HelmEngine::noteOff(mopo_float note, int sample) {
@@ -411,10 +412,14 @@ namespace mopo {
   }
 
   void HelmEngine::setAftertouch(mopo_float note, mopo_float value, int sample) {
+    if (arp_on_->value())
+      arpeggiator_->setAftertouch(note, value);
     voice_handler_->setAftertouch(note, value, sample);
   }
 
   void HelmEngine::setChannelAftertouch(int channel, mopo_float value, int sample) {
+    if (arp_on_->value())
+      arpeggiator_->setChannelAftertouch(channel, value);
     voice_handler_->setChannelAftertouch(channel, value, sample);
   }
 

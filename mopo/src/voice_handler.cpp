@@ -290,7 +290,8 @@ namespace mopo {
     return 0;
   }
 
-  void VoiceHandler::noteOn(mopo_float note, mopo_float velocity, int sample, int channel) {
+  void VoiceHandler::noteOn(mopo_float note, mopo_float velocity, int sample, int channel,
+                            mopo_float aftertouch) {
     MOPO_ASSERT(sample >= 0 && sample < buffer_size_);
     MOPO_ASSERT(channel >= 0 && channel < NUM_MIDI_CHANNELS);
 
@@ -300,7 +301,8 @@ namespace mopo {
 
     if (last_played_note_ < 0)
       last_played_note_ = note;
-    voice->activate(note, velocity, last_played_note_, pressed_notes_.size(), sample, channel);
+    voice->activate(note, velocity, last_played_note_, pressed_notes_.size(), sample, channel,
+                    aftertouch);
     active_voices_.push_back(voice);
     last_played_note_ = note;
   }
