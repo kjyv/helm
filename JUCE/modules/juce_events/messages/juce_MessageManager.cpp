@@ -134,8 +134,11 @@ void MessageManager::runDispatchLoop()
 
 void MessageManager::stopDispatchLoop()
 {
-    (new QuitMessage())->post();
+    // The message thread can delete this MessageManager as soon as the QuitMessage is posted,
+    // so set the flag before. MessageBase::post() refuses to post after the flag is set.
     quitMessagePosted = true;
+    MessageBase::Ptr quitMessage (new QuitMessage());
+    postMessageToSystemQueue (quitMessage.get());
 }
 
 #endif
