@@ -38,6 +38,14 @@ namespace mopo {
   HelmEngine::~HelmEngine() {
     while (mod_connections_.size())
       disconnectModulation(*mod_connections_.begin());
+
+    // Frees the inputs and outputs of all processors of the engine. The routers only delete the
+    // processors, because clones share these buffers with the originals.
+    destroy();
+
+    // The arpeggiator is in no router.
+    arpeggiator_->destroy();
+    delete arpeggiator_;
   }
 
   void HelmEngine::init() {
