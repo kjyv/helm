@@ -1423,9 +1423,12 @@ public:
                         if (event->body.type == uridMidiEvent)
                         {
                             const uint8* data = (const uint8*)(event + 1);
-                            //skip midi cc messages (parameter values are set directly from host)
+                            // the host maps the knob CCs to parameters, so of the controllers only
+                            // the sustain pedal goes to the plugin
                             switch (lv2_midi_message_type(data)) {
                                 case LV2_MIDI_MSG_CONTROLLER:
+                                    if (event->body.size >= 3 && data[1] == LV2_MIDI_CTL_SUSTAIN)
+                                        midiEvents.addEvent(data, event->body.size, event->time.frames);
                                     break;
                                 default:
                                     midiEvents.addEvent(data, event->body.size, event->time.frames);
