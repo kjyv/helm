@@ -22,6 +22,8 @@
 #include "helm_common.h"
 #include "helm_module.h"
 
+#include <map>
+
 namespace mopo {
   class Arpeggiator;
   class HelmVoiceHandler;
@@ -71,6 +73,14 @@ namespace mopo {
       Arpeggiator* arpeggiator_;
       ValueSwitch* arp_on_;
       bool was_playing_arp_;
+
+      struct HeldNote {
+        mopo_float velocity;
+        int channel;
+        mopo_float aftertouch;
+      };
+      // the keys that are down, handed to the arpeggiator or the voices when arp_on changes
+      std::map<mopo_float, HeldNote> held_notes_;
 
       Value* lfo_1_retrigger_;
       Value* lfo_2_retrigger_;

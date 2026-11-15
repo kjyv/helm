@@ -370,8 +370,17 @@ namespace mopo {
 
   void HelmEngine::process() {
     bool playing_arp = arp_on_->value();
-    if (was_playing_arp_ != playing_arp)
+    if (was_playing_arp_ != playing_arp) {
       arpeggiator_->allNotesOff();
+      // the keys that are still down keep sounding
+      for (auto& held : held_notes_) {
+        const HeldNote& n = held.second;
+        if (playing_arp)
+          arpeggiator_->noteOn(held.first, n.velocity, 0, n.channel, n.aftertouch);
+        else
+          voice_handler_->noteOn(held.first, n.velocity, 0, n.channel, n.aftertouch);
+      }
+    }
 
     was_playing_arp_ = playing_arp;
     arpeggiator_->process();
@@ -394,11 +403,13 @@ namespace mopo {
   }
 
   void HelmEngine::allNotesOff(int sample) {
+    held_notes_.clear();
     arpeggiator_->allNotesOff(sample);
   }
 
   void HelmEngine::noteOn(mopo_float note, mopo_float velocity, int sample, int channel,
                           mopo_float aftertouch) {
+    held_notes_[note] = { velocity, channel, aftertouch };
     if (arp_on_->value())
       arpeggiator_->noteOn(note, velocity, sample, channel, aftertouch);
     else
@@ -406,6 +417,7 @@ namespace mopo {
   }
 
   VoiceEvent HelmEngine::noteOff(mopo_float note, int sample) {
+    held_notes_.erase(note);
     if (arp_on_->value())
       return arpeggiator_->noteOff(note, sample);
     return voice_handler_->noteOff(note, sample);
